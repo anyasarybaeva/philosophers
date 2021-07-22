@@ -6,11 +6,11 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include <sys/time.h>
-#define FORK " has taken a fork\n"
-#define EAT " is eating\n"
-#define SLEEP " is sleeping\n"
-#define THINK " is thinking\n"
-#define DIE " died\n"
+#define FORK "has taken a fork"
+#define EAT "is eating"
+#define SLEEP "is sleeping"
+#define THINK "is thinking"
+#define DIE "died"
 #define F 1
 #define E 2
 #define S 3
@@ -30,8 +30,7 @@ typedef struct s_philo
 	int t_sleep;
 	int t_die;
 	int n_eat;
-	int *is_eating;
-	int *last_meal;
+	int last_meal[2];
 	pthread_t		*thread;
 
 }				t_philo;

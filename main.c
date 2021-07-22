@@ -1,12 +1,12 @@
 #include"philo.h"
-long long int get_time(struct timeval start)
+int get_time(struct timeval start)
 {
 	struct timeval now;
 	gettimeofday(&now,0);
 	return((now.tv_sec-start.tv_sec)*1000+(now.tv_usec-start.tv_usec)*0.001);
 
 }
-void print_msg(t_philo *philo, int MSG)
+/*void print_msg(t_philo *philo, int MSG)
 {
 	ft_putnbr(get_time(philo->start));
 	ft_putstr(" ");
@@ -21,29 +21,46 @@ void print_msg(t_philo *philo, int MSG)
 		ft_putstr(THINK);
 	else if(MSG==D)
 		ft_putstr(DIE);
-	usleep(10);
+	//usleep(10);
+}*/
+void print_msg(t_philo *philo, char *MSG)
+{
+	printf("|%d| |%d| |%s|\n",get_time(philo->start),philo->number,MSG);
+	usleep(3);
+	/*if(MSG==F)
+		printf("%s",FORK);
+	else if(MSG==E)
+		printf("%s",EAT);
+	else if(MSG==S)
+		printf("%s",SLEEP);
+	else if(MSG==T)
+		printf("%s",THINK);
+	else if(MSG==D)
+		printf("%s",DIE);*/
+	//usleep(10);
 }
 void *life(void *argv)
 {
 	t_philo *philo;
 
+	philo = (t_philo*)argv;
 	while(1)
 	{
-		ft_putnbr(philo->number);
 		pthread_mutex_lock(philo->r_fork);
 		pthread_mutex_lock(philo->l_fork);
 		philo->last_meal[1]=EATING;
-		print_msg(philo,F);
-		print_msg(philo,F);
-		print_msg(philo,E);
+		print_msg(philo,FORK);
+		print_msg(philo,FORK);
+		print_msg(philo,EAT);
 		usleep(philo->t_eat*1000);
 		philo->last_meal[0]=get_time(philo->start);
 		philo->last_meal[1]=CHILLING;
 		pthread_mutex_unlock(philo->r_fork);
 		pthread_mutex_unlock(philo->l_fork);
-		print_msg(philo,S);
+		usleep(10);
+		print_msg(philo,SLEEP);
 		usleep(philo->t_sleep*1000);
-		print_msg(philo,T);
+		print_msg(philo,THINK);
 	}
 	return (0);
 }
@@ -51,15 +68,14 @@ void *life(void *argv)
 int check_death(t_philo **philo)
 {
 	int i;
-
+	
 	i=-1;
 	while (philo[++i])
 	{
-		if(philo[i]->last_meal[0]==-1 || philo[i]->last_meal[1]==EATING)
-			continue;
-		if(philo[i]->last_meal[0]-get_time(philo[i]->start)>=philo[i]->t_die && philo[i]->last_meal[1]==CHILLING)
+		//printf("check_death:%d\n",(get_time(philo[i]->start)-philo[i]->last_meal[0])-philo[i]->t_die);
+		if(get_time(philo[i]->start)-philo[i]->last_meal[0]>=philo[i]->t_die)
 		{
-			print_msg(philo[i],D);
+			print_msg(philo[i],DIE);
 			//free_all(philo);
 			return(1);
 		}
@@ -83,20 +99,13 @@ int main(int argc,char **argv)
 	{
 		philo = init_struct(argv);
 		if (!philo)
-			printf("Wrong type of arg");
-		
+			return(0);
 		gettimeofday(&(philo[0]->start),0);
 		while (i<philo[0]->all)
 		{
 			philo[i]->start=philo[0]->start;
-			philo[i]->last_meal=malloc(sizeof(int));
 			if(i % 2 == 0)	
 			{
-				ft_putnbr(i);
-				ft_putstr("lil\n");
-				ft_putnbr(philo[i]->number);
-								ft_putstr("\n");
-
 				pthread_create(philo[i]->thread, 0, &life, philo[i]);
 				pthread_detach(*(philo[i]->thread));
 				usleep(100);
@@ -107,11 +116,8 @@ int main(int argc,char **argv)
 		usleep(100);
 		while (i<philo[0]->all)
 		{
-			printf("here\n");
 			if(i % 2 != 0)	
 			{
-				ft_putnbr(philo[i]->number);
-				ft_putstr("\n");
 				pthread_create(philo[i]->thread, 0, &life, philo[i]);
 				pthread_detach(*(philo[i]->thread));
 				usleep(100);

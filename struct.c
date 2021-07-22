@@ -43,7 +43,7 @@ t_philo **fill_struct(int n_of_ph, char **argv)
 	t_philo **philo;
 	i = -1;
 
-	philo=malloc(sizeof(t_philo*)*(n_of_ph+1));
+	philo = malloc(sizeof(t_philo*)*(n_of_ph+1));
 	while(++i<n_of_ph)
 	{
 		philo[i] = malloc(sizeof(t_philo) * (1));
@@ -57,11 +57,10 @@ t_philo **fill_struct(int n_of_ph, char **argv)
 		philo[i]->thread = malloc(sizeof(pthread_t));
 		if(!philo[i]->thread)
 			return(0);
-		philo[i]->last_meal=malloc(sizeof(int)*2);
 		philo[i]->last_meal[0]=-1;
 		philo[i]->last_meal[1]=CHILLING;
 		philo[i]->all=n_of_ph;
-		//philo[i]->
+	
 	}
 	make_forks(n_of_ph,philo);
 	philo[n_of_ph] = 0;
@@ -76,12 +75,34 @@ t_philo **init_struct(char **argv)
 	n_of_ph = check_number(argv[1]);
 	if (n_of_ph < 2 || n_of_ph > 200)
 		return (0);
-	//philo = malloc(sizeof(t_philo*) * (n_of_ph+1));
-	if (check_number(argv[2]) == -2 || check_number(argv[3]) == -2 ||  check_number(argv[4]) == -2 ||check_number(argv[5]))
+	if (check_number(argv[2]) == -2 || check_number(argv[3]) == -2 ||  check_number(argv[4]) == -2 ||check_number(argv[5])==-2)
 	{
-		//free(philo);
+		printf("wrong argvs\n");
 		return(0);
 	}
-	return(fill_struct(n_of_ph,argv));
-	//return(philo);
+	philo=fill_struct(n_of_ph,argv);
+	if(!philo)
+	{
+		printf("malloc error");
+		return(0);
+	}
+	return(philo);
+}
+
+void free_all(t_philo **philo)
+{
+	int i;
+
+	i=-1;
+	while (philo[++i])
+	{
+		pthread_mutex_destroy(philo[i]->r_fork);
+		free(philo[i]->r_fork);
+	}
+	while (philo[++i])
+	{
+		free(philo[i]->thread);
+		free(philo[i]);
+	}
+	free(philo);
 }
