@@ -39,4 +39,5 @@ int	ft_atoi(const char *str);
 void	ft_putstr(char *s);
 void	ft_putnbr(int n);
 t_philo **init_struct(char **argv);
+void free_all(t_philo **philo);
 #endif
