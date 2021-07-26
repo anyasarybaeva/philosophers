@@ -42,12 +42,12 @@ t_philo **fill_struct(int n_of_ph, char **argv)
 	int i;
 	t_philo **philo;
 	i = -1;
+	int *error;
 	pthread_mutex_t *print;
 	print=malloc(sizeof(pthread_mutex_t));
 	pthread_mutex_init(print,0);
 	pthread_mutex_t *exit;
 	exit=malloc(sizeof(pthread_mutex_t));
-
 	pthread_mutex_init(exit,0);
 	philo = malloc(sizeof(t_philo*)*(n_of_ph+1));
 	while(++i<n_of_ph)

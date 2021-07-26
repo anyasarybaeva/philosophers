@@ -11,11 +11,6 @@
 #define SLEEP "is sleeping"
 #define THINK "is thinking"
 #define DIE "died"
-#define F 1
-#define E 2
-#define S 3
-#define T 4
-#define D 5
 #define EATING 6
 #define CHILLING 7
 
@@ -26,6 +21,7 @@ typedef struct s_philo
 	pthread_mutex_t *print;
 	pthread_mutex_t *exit;
 	struct timeval start; 
+	struct timeval start_loop; 
 	int all;
 	int number;
 	int t_eat;
@@ -34,6 +30,7 @@ typedef struct s_philo
 	int eat[1];
 	int n_eat;
 	int last_meal[2];
+	int error[1];
 	pthread_t		*thread;
 
 }				t_philo;

@@ -14,8 +14,18 @@ int get_now()
 	now=time.tv_sec*1000+time.tv_usec*0.001;
 	return(now);
 }
+/*void usleep_new(int ml)
+{
+	int result;
+	result=get_now()+ml;
+	while (get_now()<result)
+		usleep(1000);
+}*/
 void usleep_new(int ml)
 {
-	while(ml--)
-		usleep(1000);
+	int result;
+	struct timeval start;
+	gettimeofday(&start,0);
+	while(get_time(start)<ml)
+		usleep(2000);
 }
