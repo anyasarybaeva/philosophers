@@ -23,12 +23,15 @@ typedef struct s_philo
 {
 	pthread_mutex_t *l_fork;
 	pthread_mutex_t *r_fork;
+	pthread_mutex_t *print;
+	pthread_mutex_t *exit;
 	struct timeval start; 
 	int all;
 	int number;
 	int t_eat;
 	int t_sleep;
 	int t_die;
+	int eat[1];
 	int n_eat;
 	int last_meal[2];
 	pthread_t		*thread;
@@ -40,4 +43,6 @@ void	ft_putstr(char *s);
 void	ft_putnbr(int n);
 t_philo **init_struct(char **argv);
 void free_all(t_philo **philo);
+void usleep_new(int ml);
+int get_time(struct timeval start);
 #endif

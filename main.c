@@ -1,35 +1,28 @@
 #include"philo.h"
-int get_time(struct timeval start)
-{
-	struct timeval now;
-	gettimeofday(&now,0);
-	return((now.tv_sec-start.tv_sec)*1000+(now.tv_usec-start.tv_usec)*0.001);
-
-}
 void print_msg(t_philo *philo, char *MSG)
 {
+	pthread_mutex_lock(philo->print);
 	printf("|%d| |%d| |%s|\n",get_time(philo->start),philo->number,MSG);
-	//usleep(3);
+	pthread_mutex_unlock(philo->print);
 }
 void *life(void *argv)
 {
 	t_philo *philo;
 
 	philo = (t_philo*)argv;
+	philo->last_meal[0]=philo->t_die;
+	
 	while(1)
 	{
 		pthread_mutex_lock(philo->r_fork);
 		print_msg(philo,FORK);
 		pthread_mutex_lock(philo->l_fork);
 		print_msg(philo,FORK);
-		philo->last_meal[1]=EATING;
+		philo->last_meal[0]=get_time(philo->start)+philo->t_die;
 		print_msg(philo,EAT);
 		usleep(philo->t_eat*1000);
-		philo->last_meal[1]=CHILLING;
-		philo->last_meal[0]=get_time(philo->start);
 		pthread_mutex_unlock(philo->r_fork);
 		pthread_mutex_unlock(philo->l_fork);
-		//usleep(10);
 		print_msg(philo,SLEEP);
 		usleep(philo->t_sleep*1000);
 		print_msg(philo,THINK);
@@ -37,28 +30,34 @@ void *life(void *argv)
 	return (0);
 }
 
-int check_death(t_philo **philo)
+void *check_death(void *argv)
 {
 	int i;
-	
-	i=-1;
-	while (philo[++i])
+	t_philo *philo;
+	philo = (t_philo*)argv;
+	while(1)
 	{
-		if(get_time(philo[i]->start)-philo[i]->last_meal[0]>=philo[i]->t_die  && philo[i]->last_meal[1]==CHILLING/*&& pthread_mutex_lock(philo[i]->r_fork) == 0 && pthread_mutex_lock(philo[i]->l_fork)==0*/)
+		i=-1;
+		while (++i<philo[0].all)
 		{
-			print_msg(philo[i],DIE);
-			//free_all(philo);
-			return(1);
+			//printf("%d %d %d\n",get_time(philo[i].start),philo[i].last_meal[0]+philo[i].t_die, i);
+			if(get_time(philo[i].start)>(philo[i].last_meal[0]))
+			{
+				pthread_mutex_lock(philo[i].print);
+				//free_all()
+				printf("|%d| |%d| |%s| %d\n",get_time(philo[i].start),philo[i].number,DIE,philo[i].last_meal[0]);
+				pthread_mutex_unlock(philo[i].exit);
+			}
 		}
+		usleep(30);
 	}
-	usleep(3);
-	return(0);
 }
 int main(int argc,char **argv)
 {
 	t_philo **philo;
 	int		i;
 	int time;
+	pthread_t thread;
 
 	i = 0;
 	if (argc > 6 || argc < 5)
@@ -72,6 +71,9 @@ int main(int argc,char **argv)
 		if (!philo)
 			return(0);
 		gettimeofday(&(philo[0]->start),0);
+		pthread_mutex_lock(philo[0]->exit);
+		pthread_create(&thread,0,&check_death,*(philo));
+		pthread_detach(thread);
 		while (i<philo[0]->all)
 		{
 			philo[i]->start=philo[0]->start;
@@ -79,10 +81,11 @@ int main(int argc,char **argv)
 			{
 				pthread_create(philo[i]->thread, 0, &life, philo[i]);
 				pthread_detach(*(philo[i]->thread));
-				usleep(3);
+				//usleep(10);
 			}
 			i++;
 		}
+		usleep(20);
 		i = 0;
 		while (i<philo[0]->all)
 		{
@@ -90,15 +93,12 @@ int main(int argc,char **argv)
 			{
 				pthread_create(philo[i]->thread, 0, &life, philo[i]);
 				pthread_detach(*(philo[i]->thread));
-				usleep(3);
+				//usleep(10);
 			}
 			i++;
 		}
 	}
-	while(1)
-	{
-		if(check_death(philo))
-			break;
-	};
+	pthread_mutex_lock(philo[0]->exit);
+	//free_all()
 	return(0);
 }
