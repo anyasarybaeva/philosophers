@@ -1,6 +1,8 @@
 # philosophers
 ## Final mark
 <img width="205" alt="Снимок экрана 2022-04-22 в 00 58 21" src="https://user-images.githubusercontent.com/36243405/164567281-56ca39db-6ccb-4856-bfb1-efb2ade8acb5.png">
+
+---
 ## Mandatory part
 Program should take the following arguments: number_of_philosophers time_to_die time_to_eat time_to_sleep [number_of_times_each_philosopher_must_eat]
 * number_of_philosophers: The number of philosophers and also the number of forks.
