@@ -10,34 +10,32 @@ int	check_number(char	*argv, int	limit_min, int	limit_max)
 	while (argv[++i])
 	{
 		if (!ft_isdigit(argv[i]))
-			return (0);
+			return (-2);
 	}
 	if (i >= 11)
 		return (-2);
 	i = ft_atoi(argv);
-	if (i < limit_min && i > limit_max)
+	if (i < limit_min || i > limit_max)
 		i = -2;
 	return (i);
 }
 
 void	make_forks(int	n_of_ph, t_philo	**philo)
 {
-	pthread_mutex_t	**forks;
 	int				i;
 
 	i = -1;
-	forks = malloc(sizeof(pthread_mutex_t *) * n_of_ph);
 	while (++i < n_of_ph)
 	{
-		forks[i] = malloc(sizeof(pthread_mutex_t));
-		pthread_mutex_init(forks[i], 0);
+		philo[i]->r_fork = malloc(sizeof(pthread_mutex_t));
+		pthread_mutex_init(philo[i]->r_fork, 0);
 	}
 	i = -1;
-	while (++i < n_of_ph)
+	while (++i < n_of_ph - 1)
 	{	
-		philo[i]->r_fork = forks[i];
-		philo[i]->l_fork = forks[(i + 1) % n_of_ph];
+		philo[i]->l_fork = philo[i + 1]->r_fork;
 	}
+	philo[i]->l_fork = philo[0]->r_fork;
 }
 
 int	fill_philo(t_philo	*philo, char	**argv, pthread_mutex_t	\
@@ -94,7 +92,7 @@ t_philo	**init_struct(char	**argv)
 	n_of_ph = check_number(argv[1], 1, 200);
 	if (check_number(argv[2], 20, 10000) == -2 || check_number(argv[3], \
 	 20, 10000) == -2 || check_number(argv[4], 20, 10000) == -2 \
-	 || check_number(argv[5], 20, 10000) == -2 || n_of_ph == -2)
+	 || check_number(argv[5], 1, 10000) == -2 || n_of_ph == -2)
 	{
 		printf("wrong argvs\n");
 		return (0);

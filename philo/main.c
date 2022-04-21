@@ -40,7 +40,7 @@ void	philo_lounge(t_philo	**philo)
 			pthread_detach(*(philo[i]->thread));
 		}
 	}
-	usleep(10);
+	usleep(100);
 	i = -1;
 	while (++i < philo[0]->all)
 	{
@@ -74,6 +74,5 @@ int	main(int	argc, char	**argv)
 		pthread_mutex_lock(philo[0]->exit);
 		free_all(philo);
 	}
-	//while(1);
 	return (0);
 }

@@ -7,12 +7,13 @@ void	hungry_death(t_philo	*philo)
 	i = -1;
 	while (++i < philo[0].all)
 	{
-		if (get_time(philo[i].start) >= philo[i].last_meal[0] && \
-		philo->last_meal[1] == CHILLING)
+		if (get_time(philo[i].start) >= philo[i].last_meal[0])
 		{
 			pthread_mutex_lock(philo[i].print);
-			printf("%d %d %s\n", get_time(philo[i].start), philo[i].number, DIE);
+			printf("%d ms %d %s\n", get_time(philo[i].start), \
+			philo[i].number, DIE);
 			pthread_mutex_unlock(philo[0].exit);
+			usleep(1000000);
 		}
 	}
 }
@@ -50,8 +51,8 @@ int	check_eat(t_philo	*philo)
 	if (i == philo[0].all)
 	{
 		pthread_mutex_lock(philo[0].print);
-		printf("%d %d %s\n", get_time(philo[0].start), philo[0].number, DIE);
 		pthread_mutex_unlock(philo[0].exit);
+		usleep(1000000);
 		return (1);
 	}
 	return (0);

@@ -1,12 +1,12 @@
 NAME = philo
 
-LIST =			main.c death.c struct.c utils.c libft.c
+LIST = main.c death.c struct.c utils.c libft.c
 
 OBJ = $(patsubst %.c,%.o,$(LIST))
 
 D_FILES = $(patsubst %.c,%.d,$(LIST))
 
-OTPFLAGS = -O2
+OTPFLAGS = -O2 -g
 
 FLAGS = -Wall -Wextra -Werror
 

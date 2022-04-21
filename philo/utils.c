@@ -21,7 +21,7 @@ void	usleep_new(int	ml)
 void	print_msg(t_philo	*philo, char	*MSG)
 {
 	pthread_mutex_lock(philo->print);
-	printf("%d %d %s\n", get_time(philo->start), philo->number, MSG);
+	printf("%d ms %d %s\n", get_time(philo->start), philo->number, MSG);
 	pthread_mutex_unlock(philo->print);
 }
 
@@ -39,6 +39,7 @@ void	free_all(t_philo	**philo)
 	pthread_mutex_destroy(philo[0]->exit);
 	free(philo[0]->print);
 	free(philo[0]->exit);
+	i = -1;
 	while (philo[++i])
 	{
 		free(philo[i]->thread);
